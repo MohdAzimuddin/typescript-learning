@@ -1,148 +1,189 @@
 // Benefits of TypeScript types:
-// Catches errors early 
+// Catches errors early
 // Improves code readability and maintainability
 
 // primitive data types using Ts
 
 // String
-let userName:string="Azimuddin";
-userName="Mohd Azimuddin";
-console.log("userName:-",userName);
+let userName: string = "Azimuddin";
+userName = "Mohd Azimuddin";
+console.log("userName:-", userName);
 
 //Number
-let age:number=23;
-console.log("age:-",age)
-
+let age: number = 23;
+console.log("age:-", age);
 
 // Boolean
-let isLoggedIn:boolean=true;
-console.log("is user LoggedIn:-",isLoggedIn)
-
+let isLoggedIn: boolean = true;
+console.log("is user LoggedIn:-", isLoggedIn);
 
 // Sysmbol
-let uniqueId:symbol=Symbol("id")
-console.log("uniqueId:-",uniqueId)
-
+let uniqueId: symbol = Symbol("id");
+console.log("uniqueId:-", uniqueId);
 
 // BigInt
 
-let hugeNumber:bigint=9000000784378393981n
-console.log("hugeNumber:-",hugeNumber)
-
-
+let hugeNumber: bigint = 9000000784378393981n;
+console.log("hugeNumber:-", hugeNumber);
 
 // Note: Once a primitive data type is assigned to a variable, only values of that same type can be assigned to it.
 
-
-
-// 3 Array: 
+// 3 Array:
 // Arrays can be typed in two ways:
 
 // 1. Square Bracket Syntax
 
-let numbersArray:number[]=[1,2,3,4]
-numbersArray.push(18)
+let numbersArray: number[] = [1, 2, 3, 4];
+numbersArray.push(18);
 
-console.log(numbersArray)
+console.log(numbersArray);
 
-let stringArr:string[]=["Azimuddin","Shyam","Virat"]
-console.log(stringArr)
+let stringArr: string[] = ["Azimuddin", "Shyam", "Virat"];
+console.log(stringArr);
 
 // 2. Generic Syntax
 
-let numbersArrayG:Array<number>=[1,2,3]
-console.log(numbersArrayG)
-// 
-let stringArrG:Array<string>=["apple","orange"]
-console.log(stringArrG)
+let numbersArrayG: Array<number> = [1, 2, 3];
+console.log(numbersArrayG);
+//
+let stringArrG: Array<string> = ["apple", "orange"];
+console.log(stringArrG);
 
 // Read-only arrays
 
-let readOnlyArr: readonly number[]=[18,7,45] 
+let readOnlyArr: readonly number[] = [18, 7, 45];
 // readOnlyArr.pop()  Error: beacuse readonly
 
-console.log(readOnlyArr)
-
-
+console.log(readOnlyArr);
 
 // 4. Tuples
 // Tuppes are fixed-length array with specific type in speciifc position
 
-let goatCricketer:[string,number]=["virat kohli",18]
+let goatCricketer: [string, number] = ["virat kohli", 18];
 // let goatCricketer:[string,number]=[18,"virat Kohli"]  //Error
-console.log(goatCricketer)
-
+console.log(goatCricketer);
 
 // Optional tuple elements:
 
-let address:[string,string?,number?]=["Neral","karjat",410101]
+let address: [string, string?, number?] = ["Neral", "karjat", 410101];
 
 // address=["Neral"]
 // address=["Neral","City"]
 // address=["Neral","karjat",410101]
 
-console.log(address)
+console.log(address);
 
 // Named tuples (for readability):
-let player:[name:string,JersyNo:number]=["virat",18]
-console.log(player)
-
+let player: [name: string, JersyNo: number] = ["virat", 18];
+console.log(player);
 
 // Enumuration(Enums)
 //Enum defines named constant
 
 // Numeric Enums
 
-enum Direction{
-    up, //0
-    Down,
-    Left,
-    Right,//3        
+enum Direction {
+  up, //0
+  Down,
+  Left,
+  Right, //3
 }
 
-
-let move:Direction=Direction.up
-console.log(move)
-
+let move: Direction = Direction.up;
+console.log(move);
 
 // Custom numeric values
 
-enum StatusCode{
-    Success=200,
-    NotFound=404,
-    ServerError=500,
+enum StatusCode {
+  Success = 200,
+  NotFound = 404,
+  ServerError = 500,
 }
 
-console.log(StatusCode.Success)
-console.log(StatusCode.ServerError)
-
+console.log(StatusCode.Success);
+console.log(StatusCode.ServerError);
 
 // String Enums
 
-enum Status{
-    Success="success code is 200",
-    BadRequest="Bad request code is 404"
+enum Status {
+  Success = "success code is 200",
+  BadRequest = "Bad request code is 404",
 }
 
-console.log(Status.Success)
+console.log(Status.Success);
 
 // Const Enums
 
-const enum DirectionConst{
-    Up,
-    Down,
-    Left,
-    Right
+const enum DirectionConst {
+  Up,
+  Down,
+  Left,
+  Right,
 }
 
-console.log(DirectionConst.Right)
-
-
-// Ay
+console.log(DirectionConst.Right);
 
 // any
-// Disables type checking.
-// Use only if you truly don’t know the type.
-let data: any = 42;
-data = "Hello"; 
-data = true; 
+
+// Disabled type cehcking
+// we should use it if we truely dont know the type
+
+let data: any;
+data = "Hello";
+data = true; //if other data type then string appear at last the below function will not work
+
+// function anyData():string{
+//     return data.toUpperCase()
+// }
+
+// console.log(anyData())
+
+// unknown
+let unData: unknown;
+
+unData = "Virat";
+unData = 18;
+unData = true;
+
+if (typeof unData === "string") {
+  console.log(unData);
+}
+
+// void:
+// use it for function that dont return anything
+
+function sayHi():void{
+    console.log("Hi i am void")
+}
+
+
+sayHi()
+
+
+// Null
+// intentional absance of any value
+let a:null;
+// a=42       //error
+// a="virat"   //error
+
+
+// Undefined
+// varaible that hasn't been assigned
+ let u:undefined;
+//  u="Azeemuddin";      //error
+//  u=12;                //error
+
+
+
+// Never
+//  function will never fisih normally
+
+console.log("Hi before never")
+
+function forever():never{
+    while(true) {}
+    // console.log("i am never")  means that TypeScript expects the function to never finish normally, but this function has a code path that does end normally, which is a contradiction.
+}
+
+// forever()
+console.log("Hi after never")
