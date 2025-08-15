@@ -136,3 +136,13 @@ const enum DirectionConst{
 }
 
 console.log(DirectionConst.Right)
+
+
+// Ay
+
+// any
+// Disables type checking.
+// Use only if you truly don’t know the type.
+let data: any = 42;
+data = "Hello"; 
+data = true; 
