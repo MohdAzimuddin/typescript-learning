@@ -153,37 +153,76 @@ const enum DirectionConst {
 
 ---
 
-## **6. `any`, `unknown`, `void`, and More**
 
-### **`any`**
+## **6 any, unknown, void, never, null, and undefined fit together in TypeScript’s type hierarchy.**
 
-* Disables type checking.
-* Use **only if you truly don’t know the type**.
+## 1. **`any`**
+
+**Meaning:** "I give up — TypeScript, stop checking this."
+
+* Completely disables type safety for that variable.
+* You can assign anything to it, and do anything with it — even things that make no sense — and the compiler won’t complain.
+* Often called the "escape hatch" type.
+
+**Example:**
 
 ```ts
 let data: any = 42;
-data = "Hello"; // OK
-data = true; // OK
+data.toUpperCase(); // No error at compile time — but will crash at runtime!
 ```
+
+**When to use:**
+
+* Rarely. Usually when integrating with old JS code or a library with no types.
+* Use as a temporary solution, then replace with a real type.
+
+**Risk:**
+
+* Completely bypasses the benefits of TypeScript — you might as well be writing plain JavaScript.
 
 ---
 
-### **`unknown`**
+## 2. **`unknown`**
 
-* Like `any`, but **type-safe** — you must check before using.
+**Meaning:** "I don’t know what this is yet — so you must check first."
+
+* Like `any`, it can hold any value.
+* But unlike `any`, **you can’t use it without type-checking or narrowing**.
+* Forces you to prove the type before doing anything with it.
+
+**Example:**
 
 ```ts
 let value: unknown = "Hello";
+
+// Direct use ❌
+value.toUpperCase(); // Error: Object is of type 'unknown'
+
+// Type narrowing ✅
 if (typeof value === "string") {
-  console.log(value.toUpperCase()); // Safe
+  console.log(value.toUpperCase());
 }
 ```
 
+**When to use:**
+
+* When you’re dealing with external input (e.g., JSON from an API, user input).
+* Safer alternative to `any`.
+
+**Risk:**
+
+* Slightly more verbose — but that’s the point: it keeps you honest.
+
 ---
 
-### **`void`**
+## 3. **`void`**
 
-* Used for functions that **don’t return anything**.
+**Meaning:** "This function doesn’t return anything useful."
+
+* Typically used for function return types.
+* Doesn’t mean the function literally returns *nothing* — it means we ignore any return value.
+
+**Example:**
 
 ```ts
 function logMessage(msg: string): void {
@@ -191,37 +230,117 @@ function logMessage(msg: string): void {
 }
 ```
 
+**Special Note:**
+
+* `void` variables can only be assigned `undefined` (unless `--strictNullChecks` is off).
+* In callbacks (like `Array.forEach`), `void` means "don’t care about the return value."
+
 ---
 
-### **`never`**
+## 4. **`never`**
 
-* For functions that **never return** (e.g., throw error, infinite loop).
+**Meaning:** "This function will never finish normally."
+
+* Functions with `never` either:
+
+  1. Throw an error, or
+  2. Have an infinite loop.
+
+**Example:**
 
 ```ts
-function throwError(message: string): never {
-  throw new Error(message);
+function throwError(msg: string): never {
+  throw new Error(msg);
+}
+
+function forever(): never {
+  while (true) {}
+}
+```
+
+**Why it’s useful:**
+
+* Helps TypeScript check exhaustiveness in `switch` statements.
+
+```ts
+type Shape = { kind: "circle" } | { kind: "square" };
+
+function handleShape(shape: Shape) {
+  switch (shape.kind) {
+    case "circle": /* ... */ break;
+    case "square": /* ... */ break;
+    default:
+      const _exhaustiveCheck: never = shape; // Error if a new kind is added
+  }
 }
 ```
 
 ---
 
-### **`null` & `undefined`**
+## 5. **`null` & `undefined`**
+
+**Meaning:** "No value" (but slightly different flavors).
+
+* `undefined` = a variable that hasn’t been assigned.
+* `null` = an explicit “no value” you assign yourself.
 
 ```ts
 let u: undefined = undefined;
 let n: null = null;
 ```
 
+**With `--strictNullChecks`:**
+
+* You must explicitly allow them in the type:
+
+```ts
+let maybeNumber: number | null | undefined;
+```
+
+**Common Pitfall:**
+
+* In JavaScript, both are falsy, but they aren’t the same.
+* APIs might use one or the other inconsistently — you have to be ready for both.
+
 ---
 
-### **`object`**
+## 6. **`object`**
+
+**Meaning:** "Any non-primitive value."
+
+* Can be an array, function, or plain object.
+* Doesn’t give details about properties.
 
 ```ts
 let user: object = { name: "Alice" };
-// user.name ❌ Error — need a more specific type
+user.name; // ❌ Property 'name' does not exist on type 'object'
+```
+
+**Better:** Use an interface or type for actual structure:
+
+```ts
+type User = { name: string };
+let user: User = { name: "Alice" };
 ```
 
 ---
+
+## **Quick Reference Table**
+
+| Type        | Can be assigned anything? | Must check before use? | Intended usage                  |
+| ----------- | ------------------------- | ---------------------- | ------------------------------- |
+| `any`       | ✅                         | ❌                      | Quick escape hatch, legacy code |
+| `unknown`   | ✅                         | ✅                      | Safe handling of unknown inputs |
+| `void`      | ❌ (functions only)        | N/A                    | No return value                 |
+| `never`     | ❌ (functions only)        | N/A                    | Functions that never finish     |
+| `null`      | Only `null`               | N/A                    | Explicit empty value            |
+| `undefined` | Only `undefined`          | N/A                    | Uninitialized/missing           |
+| `object`    | Any non-primitive object  | ❌ (but limited use)    | Avoid for structured data       |
+
+---
+
+
+
 
 ## **7. Introduction to Type Inference & Type Annotations**
 
@@ -278,6 +397,204 @@ const multiply = (x: number, y: number): number => x * y;
 * Use `readonly` for arrays/objects that should not change.
 * Use **string enums** if you care about readable debugging.
 * Tuples are great for **pairs** and **fixed-format data**.
+
+---
+
+* **Defining interfaces**
+* **Using interfaces to define object shapes**
+* **Extending interfaces**
+* **Type aliases**
+* **Intersection types**
+---
+
+# 📘 TypeScript: Interfaces and Type Aliases
+
+---
+
+## 1. Defining Interfaces
+
+In TypeScript, **interfaces** are used to describe the shape (structure) of an object. They tell TypeScript what properties and methods an object should have.
+
+### Syntax:
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  isAdmin: boolean;
+}
+```
+
+Here, any object of type `User` must have all three properties: `id`, `name`, and `isAdmin`.
+
+### Example:
+
+```ts
+const user: User = {
+  id: 1,
+  name: "Alice",
+  isAdmin: true,
+};
+```
+
+If a property is missing or has the wrong type, TypeScript will throw an error.
+
+---
+
+## 2. Using Interfaces to Define Object Shapes
+
+Interfaces shine when modeling complex **object shapes** or **function signatures**.
+
+### Example: Object Shapes
+
+```ts
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  tags?: string[]; // optional property
+}
+```
+
+* `tags?` means the property is **optional**.
+
+```ts
+const book: Product = {
+  id: 101,
+  title: "TypeScript Handbook",
+  price: 29.99,
+};
+```
+
+### Example: Function Signatures
+
+```ts
+interface MathOperation {
+  (a: number, b: number): number;
+}
+
+const add: MathOperation = (x, y) => x + y;
+const multiply: MathOperation = (x, y) => x * y;
+```
+
+Here, `MathOperation` ensures that any function assigned must take two numbers and return a number.
+
+---
+
+## 3. Extending Interfaces
+
+Interfaces can **extend other interfaces** (like inheritance in OOP). This allows code reuse and building complex structures.
+
+### Example:
+
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface Employee extends Person {
+  employeeId: number;
+  role: string;
+}
+
+const dev: Employee = {
+  name: "John",
+  age: 30,
+  employeeId: 1001,
+  role: "Frontend Developer",
+};
+```
+
+Here, `Employee` automatically inherits `name` and `age` from `Person`.
+
+---
+
+## 4. Type Aliases
+
+Type aliases let you **create a new name** for any type (primitive, union, tuple, object, etc.).
+
+### Syntax:
+
+```ts
+type ID = number | string;  // can be either number or string
+
+let userId: ID;
+userId = 123;    // ✅
+userId = "abc";  // ✅
+```
+
+### Example: Object Shape with Type Alias
+
+```ts
+type Car = {
+  brand: string;
+  year: number;
+};
+
+const car: Car = { brand: "Tesla", year: 2023 };
+```
+
+Type aliases and interfaces look similar when defining object shapes, but type aliases are more flexible (they can represent **primitives, unions, and tuples**).
+
+---
+
+## 5. Intersection Types
+
+Intersection types (`&`) allow you to **combine multiple types** into one. The resulting type must satisfy all combined types.
+
+### Example:
+
+```ts
+interface Drivable {
+  drive(): void;
+}
+
+interface Flyable {
+  fly(): void;
+}
+
+type FlyingCar = Drivable & Flyable;
+
+const myCar: FlyingCar = {
+  drive() {
+    console.log("Driving...");
+  },
+  fly() {
+    console.log("Flying...");
+  },
+};
+```
+
+### Another Example: Combining Objects
+
+```ts
+type A = { x: number };
+type B = { y: number };
+type C = A & B;  // { x: number; y: number }
+
+const point: C = { x: 10, y: 20 };
+```
+
+---
+
+## 🔑 Key Differences: Interface vs Type Alias
+
+| Feature                        | Interface                                                      | Type Alias                                  |
+| ------------------------------ | -------------------------------------------------------------- | ------------------------------------------- |
+| **Extends / Implements**       | Can be extended and implemented in classes                     | Cannot be "implemented" by classes directly |
+| **Object Shapes**              | Preferred for defining object structures                       | Can also define object shapes               |
+| **Primitives, Unions, Tuples** | ❌ Not supported                                                | ✅ Supported                                 |
+| **Declaration Merging**        | ✅ Supports (interfaces with the same name merge automatically) | ❌ Not supported                             |
+
+👉 **Rule of Thumb**:
+
+* Use **interfaces** when modeling objects and class contracts.
+* Use **type aliases** for **unions, primitives, tuples, and advanced type compositions**.
+
+---
+
+✅ With this foundation, you’ll be comfortable handling **props typing in React**, **API response types**, and **complex object structures** in real-world TypeScript projects.
 
 ---
 
