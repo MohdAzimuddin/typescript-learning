@@ -187,3 +187,22 @@ function forever():never{
 
 // forever()
 console.log("Hi after never")
+
+
+// Type Inference
+// TypeScript can guess the type from the value we assigned
+let TI = 10; 
+// TI= "hello"
+
+console.log("example of type inference_ "+typeof TI)
+
+
+// Type Annotations
+// You explicitly declare the type.
+
+
+let naam: string;
+
+naam="virat"
+
+console.log("example of type Annotation_ "+ typeof naam)
