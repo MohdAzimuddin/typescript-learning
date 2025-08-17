@@ -206,3 +206,202 @@ let naam: string;
 naam="virat"
 
 console.log("example of type Annotation_ "+ typeof naam)
+
+// 
+// 
+// 
+// Defining interfaces
+// Using interfaces to define object shapes
+// Extending interfaces
+// Type aliases
+// Intersection types
+
+
+
+// type interface: it help us to structure the object interface it tells ts what object should look like
+
+
+interface User{
+  id:number;
+  name:string;
+  isAdmin:boolean;
+}
+
+// any object of type (User) must have these three properties id,name,isAdmin
+
+
+const user:User={
+  id:1,
+  name:"Kohli",
+  isAdmin:true,
+}
+const {id,name,isAdmin}=user
+
+console.log({id,name,isAdmin})
+
+
+// 
+// 2. Using Interfaces to Define Object Shapes
+
+interface Product{
+  id:number;
+  title:string;
+  price:number;
+  tags?:string[]; //optional
+}
+
+
+const book:Product={
+id:101,
+title:"Azeemuddin Life Stroy",
+price:3000,
+tags:["chaser","Goat"],
+}
+
+
+console.log(`Id number ${book.id} with ${book.title} is now available at ${book.price} with tag ${book.tags}`)
+
+
+// Example: Function Signatures
+
+
+interface MathOperation {
+  (a:number,b:number):number
+}
+const addd:MathOperation=(a,b)=>a+b;
+console.log(addd(10,10))
+
+
+// Extended interface
+// an interface can extend other interface (like inherietence in oop) this allow code resuability abd complex structure
+ 
+interface Person{
+  naaam:string;
+  agee:number;
+}
+
+interface Employee extends Person{
+  employeId:number;
+  role:string;
+}
+
+const dev: Employee={
+naaam:"Mohammed Azeemuddin",
+agee:23,
+employeId:1,
+role:"Frontend developer"
+
+}
+
+// descructuring
+const {naaam,agee,employeId,role}=dev;
+
+
+console.log({naam,agee,employeId,role})
+
+// Employee automatically inherits name age from person
+
+
+
+// Type Aliases
+// type aliases lets us create new name for any type (primitive,union,tuples,object,etc)
+
+// Type aliases help us to create new name for any type(primitive,union,tuples,objects,etc)
+
+type idd=number | string;
+
+let userIdd:idd;
+
+userIdd="ax1234"
+userIdd=101
+// userIdd=true
+
+console.log(userIdd)
+
+
+// Object shape with type aliases
+
+type Car={
+  brand:string;
+  year:number;
+  model:string;
+}
+
+
+const carr:Car={
+brand:"BMW",
+year:2025,
+model:"ZUPEX"
+}
+
+
+console.log(carr.brand)
+
+
+// TYPE ALIASES for object looks similar when defining object shape but type aliases are more flexible (they can represent primitive,tuples and unions)
+
+
+// Intersection type
+
+// intersection type allow us to combined multiple types into one. the resulting type must statisfy all teh combined types
+
+interface Drivable{
+  drive():void;
+}
+// 
+interface Flayable{
+  fly():void;
+}
+
+type CarTest=Drivable & Flayable
+
+
+const myCar:CarTest={
+  drive(){
+    console.log("azim is driving");
+  },
+   fly(){
+    console.log("azim is flying")
+  },
+}
+
+myCar.drive()
+// myCar.fly()
+
+// intersection type (combined object)
+
+type A={x:number}
+type B={y:number}
+
+type C=A&B
+
+const Point:C={
+  x:10,
+  y:10,
+}
+
+console.log(Point.x+Point.y+"Type intersection combined object")
+
+
+interface goat{
+  namee:string;
+  json:number;
+}
+
+interface goat{
+  centuries:number;
+  title:string;
+}
+
+
+const Goatli:goat={
+  title:"King",
+  json:18,
+  centuries:82,
+  namee:"Virat Kohli",
+}
+
+
+const {title,json,centuries,namee}=Goatli
+
+console.log({title,json,centuries,namee})
