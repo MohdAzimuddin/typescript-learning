@@ -405,3 +405,73 @@ const Goatli:goat={
 const {title,json,centuries,namee}=Goatli
 
 console.log({title,json,centuries,namee})
+
+
+
+// Functions 
+//Functions are resusable block of code design to perfome a specific task.
+
+
+// Functions in Ts
+
+
+// Type Annotation
+function addition(a:number,b:number):number{
+  return a+b
+}
+
+console.log(addition(10,5))
+
+//Optional parameter
+
+
+function optionalPara(name:string,age:number,jno?:number):void{
+      // console.log(`${name} is a ${age} year's old`)
+      console.log(`${name} is a ${age} year's old with jersy no ${jno}`)
+
+}
+
+
+optionalPara("virat",35,18)
+
+
+// Default Parameters
+const defaultPara=((name:string="virat",age:number,centuries:number):void=>console.log(`${name} is a ${age} years old with ${centuries} centuries`))
+defaultPara(undefined,35,82)
+
+// 
+const defaultPara2=((name:string="virat"):void=>console.log(`Goat name is ${name} `))
+
+
+defaultPara2("kohli")
+
+
+
+//Functions: Rest Parameter
+// sometimes we dont know how many argument a function will recieve.  so js/ts prove rest paremeter for it
+
+const Mul=((a:number,b:number):number=>a*b);
+console.log(Mul(5,5))
+
+// in the above  case we know the argument but what if we have large se t of argument??? then comes the rest in place 
+const Mult=((...numbers:number[]):number=>numbers.reduce((acc,curr)=>acc+curr,0))
+console.log(Mult(1,2,3,4,6,7,8,9,1,2,3,4,5))
+
+
+// Functions: Overloading
+// typscript allow function overloading 
+// means we can declare multiple function for a single fuction,each with diffrent parameter type ro counts.
+
+
+function display(value:string):void;
+function display(value:number):void;
+
+function display(value:string|number):void{
+  console.log(`vlaue of function override is ${value}`);
+}
+
+
+display("Hello")
+display(100)
+
+
