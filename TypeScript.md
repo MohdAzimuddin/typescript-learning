@@ -887,18 +887,106 @@ console.log(numberContainer.getAll()); // [10, 20]
 
 ### Constraints in Generics:
 
+No problem — let's break **constraints in generics** down **step by step** with **simple language** and **clear examples**.
+
+---
+
+## ✅ What Are Generics?
+
+Generics allow your code to **work with any type**.
+
+Example:
+
 ```ts
-function getLength<T extends { length: number }>(item: T): number {
-    return item.length;
+function logValue<T>(value: T): void {
+  console.log(value);
+}
+```
+
+Here, `T` can be anything: a string, number, object, etc.
+
+---
+
+## 🤔 So What Are **Constraints**?
+
+A **constraint** tells TypeScript:
+
+> "Hey, `T` can be **any type**, but it must have **this particular shape** or **property**."
+
+---
+
+### 🔴 Without Constraints – Problem
+
+```ts
+function printName<T>(obj: T) {
+  console.log(obj.name); // ❌ Error! Type 'T' might not have a 'name' property
+}
+```
+
+Why error? Because `T` could be anything — even a number or boolean — and they don’t have a `name` property.
+
+---
+
+### ✅ With Constraints – Solution
+
+We can **constrain** `T` to types that have a `name`:
+
+```ts
+interface HasName {
+  name: string;
 }
 
-console.log(getLength("Hello"));   // 5
-console.log(getLength([1, 2, 3])); // 3
-// console.log(getLength(123)); ❌ Error (number has no length property)
+function printName<T extends HasName>(obj: T) {
+  console.log(obj.name); // ✅ Safe now!
+}
+```
+
+Now TypeScript knows:
+**"T must have a `name` property."**
+
+---
+
+### 🧠 Think of It Like This:
+
+* `T` = anything
+* `T extends SomeType` = anything, **as long as it looks like `SomeType`**
+
+---
+
+### 🧪 One More Example (Real-life style)
+
+```ts
+interface User {
+  name: string;
+  age: number;
+}
+
+function greet<T extends User>(user: T) {
+  console.log(`Hello, ${user.name}, age ${user.age}`);
+}
+```
+
+Now you can only pass objects that look like `User`.
+
+```ts
+greet({ name: "Azim", age: 23 }); // ✅ OK
+greet({ name: "Azim" });          // ❌ Missing age
+greet("Azim");                    // ❌ Not an object with name/age
 ```
 
 ---
 
+### 🔚 Summary
+
+* **Generics** = flexible types
+* **Constraints** = rules for those flexible types
+* Use `T extends SomeType` to make sure `T` has required properties
+* ✅ Yes — absolutely right!
+
+
+### "Constraints mostly work when we want to use generics with objects"
+
+---
 # ✅ Summary
 
 * **Functions**: Reusable blocks of code with typed parameters and return values.
