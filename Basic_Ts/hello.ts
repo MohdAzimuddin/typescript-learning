@@ -23,8 +23,8 @@ console.log("uniqueId:-", uniqueId);
 
 // BigInt
 
-let hugeNumber: bigint = 9000000784378393981n;
-console.log("hugeNumber:-", hugeNumber);
+// let hugeNumber: bigint = 9000000784378393981n;
+// console.log("hugeNumber:-", hugeNumber);
 
 // Note: Once a primitive data type is assigned to a variable, only values of that same type can be assigned to it.
 
@@ -498,25 +498,101 @@ const { naaamd, idsd, isLoggedInsd, userDetailss } = genricObj;
 
 console.log({ naaamd, idsd, isLoggedInsd, userDetailss });
 
-
-
 // Constraints in Generics:
-// so genric can take any type? correct 
+// so genric can take any type? correct
 // so containsts make generic more safe by specifing type can be any-type, but it must have this particular shape or property.
 
+//  Without Constraints – Problem
 
-// 🔴 Without Constraints – Problem
-
-
-interface namePring{
-  hola:string;
+interface namePring {
+  hola: string;
 }
 
-function priontName<T extends namePring>(obj:T,isd:number):void{
-console.log(obj.hola+"_"+isd);
+function priontName<T extends namePring>(obj: T, isd: number): void {
+  console.log(obj.hola + "_" + isd);
+}
+
+priontName({ hola: "foo" }, 123);
+
+// Modules
+
+import { makePayment,RecivePayment} from "./practice";
+import wholePyament from "./practice";
+
+wholePyament("Faizan",30000,"15-10-205")
+makePayment(18);
+RecivePayment("Azimuddin");
+
+
+// What are Type Assertions?
+// type Assertion tells type-script to treat a vlaue as a specific type ,even if compiler cannot infer it.
+
+
+
+
+// // angle bracket syntex
+// let value: unknown = "Hello Assertion";
+// let steLength:number=(<string>value).length
+
+// console.log(steLength)
+
+let unVlaue:unknown="virat"
+// as syntex
+
+let capitalize:string=(unVlaue as string).toUpperCase()
+console.log(capitalize);
+
+// when ts cannot infer type property
+
+// document.getElementById("elementId") as HTMLInputElement;
+
+// console.log( input.value)
+
+
+// Narrowing unknown or any
+function getValue():unknown{
+  return "TeSt";
+}
+
+let len=(getValue() as string).toLowerCase()
+console.log(len)
+
+// Type Casting
+// in js when change the one type to another type is called type casting (string to number)
+// in ts there is no true castin only assertion that tells the compiler how to treat a value
+
+
+let num:number=Number("123")
+console.log(num)
+
+
+let str:Object=Object (123)
+console.log(str)
+
+
+
+// Non-Null asertion operation
+
+let aaa: null | undefined | string;
+aaa! = "12"
+
+console.log(aaa)
+
+
+
+//Type guards are how you do type narrowing.
+
+function TG(arg: string | number | any) {
+  if (typeof arg === "string") {
+    console.log("this is string" )
+  } else if (typeof arg==="number") {
+console.log("this is number")
+  } else {
+    console.log("are you crazy")
+  }
 }
 
 
-priontName({hola:"foo"},123)
-
-
+TG(18)
+TG("Azimuddin")
+TG(null)
