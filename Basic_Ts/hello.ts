@@ -580,7 +580,7 @@ console.log(aaa)
 
 
 
-//Type guards are how you do type narrowing.
+//Type guards are how you do type narrowing
 
 function TG(arg: string | number | any) {
   if (typeof arg === "string") {
