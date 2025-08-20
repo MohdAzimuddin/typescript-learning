@@ -869,11 +869,11 @@ const numberBox: Box<number> = { content: 123 };
 ```ts
 class Container<T> {
     private items: T[] = [];
-    
+
     add(item: T): void {
         this.items.push(item);
     }
-    
+
     getAll(): T[] {
         return this.items;
     }
@@ -996,4 +996,407 @@ greet("Azim");                    // ❌ Not an object with name/age
 
 ---
 
+# 📘 TypeScript: Modules, Type Assertions, and Type Guards
 
+## 1. **Modules in TypeScript**
+
+### 🔹 What are Modules?
+
+* A **module** in TypeScript is any file that contains `import` or `export` keywords.
+* Modules allow you to **split code into reusable, maintainable pieces**.
+* They help manage **scope**: variables, functions, and classes declared inside a module are not global by default.
+
+---
+
+### 🔹 Exporting and Importing
+
+#### Named Exports
+
+```ts
+// file: mathUtils.ts
+export function add(a: number, b: number): number {
+  return a + b;
+}
+
+export const PI = 3.14;
+```
+
+```ts
+// file: app.ts
+import { add, PI } from "./mathUtils";
+
+console.log(add(5, 3)); // 8
+console.log(PI);        // 3.14
+```
+
+#### Default Exports
+
+* A module can have **one default export**.
+
+```ts
+// file: user.ts
+export default class User {
+  constructor(public name: string) {}
+}
+```
+
+```ts
+// file: app.ts
+import User from "./user";
+
+const u = new User("Alice");
+```
+
+#### Re-exporting
+
+```ts
+// file: index.ts
+export * from "./mathUtils";
+export { default as User } from "./user";
+```
+
+---
+
+### 🔹 Module Resolution
+
+* **Classic**: TypeScript looks for files relative to the importing file.
+* **Node**: Mimics Node.js resolution (`node_modules`, `package.json`).
+
+You configure this in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node"
+  }
+}
+```
+
+---
+
+### 🔹 Namespaces vs. Modules
+
+* **Namespaces** are older and group code under a single global object.
+* **Modules** are the modern standard (recommended).
+
+---
+**comprehensive TypeScript notes** in the exact same structured way, covering:
+
+1. Type Assertions
+2. Type Casting
+3. Non-null Assertion Operator
+4. Type Guards
+5. Using `typeof` and `instanceof`
+6. Utility Types (`Partial`, `Required`, `Readonly`)
+
+---
+
+# 📘 TypeScript Notes
+
+---
+
+## 1. **Type Assertions**
+
+### 🔹 What are Type Assertions?
+
+* Type assertions tell TypeScript to **treat a value as a specific type**, even if the compiler cannot infer it.
+* It only affects **type-checking**, not runtime behavior.
+
+---
+
+### 🔹 Syntax
+
+```ts
+// Angle-bracket syntax
+let value: unknown = "Hello TS";
+let strLength: number = (<string>value).length;
+
+// "as" syntax (preferred, especially with JSX)
+let strLength2: number = (value as string).length;
+```
+
+---
+
+### 🔹 Use Cases
+
+1. **When TS cannot infer type properly**
+
+```ts
+const input = document.getElementById("username") as HTMLInputElement;
+console.log(input.value);
+```
+
+2. **Narrowing `unknown` or `any`**
+
+```ts
+function getValue(): unknown {
+  return "test";
+}
+let len = (getValue() as string).length;
+```
+
+⚠️ **Warning**: If the assertion is wrong, runtime errors may occur.
+
+---
+
+## 2. **Type Casting**
+
+### 🔹 What is Type Casting?
+
+* In **JavaScript**, type casting means **converting a value to another type** (e.g., string → number).
+* In **TypeScript**, there’s no “true” casting (runtime conversion), only **assertions** that tell the compiler how to treat a value.
+
+---
+
+### 🔹 Example (Runtime Casting in JS)
+
+```ts
+let num: number = Number("123"); // Explicit casting
+let str: string = String(456);   // number -> string
+let bool: boolean = Boolean(1);  // truthy -> true
+```
+
+### 🔹 Example (Compile-time Assertion in TS)
+
+```ts
+let val: unknown = "123";
+
+// Only a compiler hint, not runtime conversion
+let num = val as number; // unsafe! actually still a string
+```
+
+✅ Use **type assertions** for compile-time narrowing.
+✅ Use **casting functions (`Number`, `String`, `Boolean`)** for runtime conversion.
+
+---
+
+## 3. **Non-null Assertion Operator (`!`)**
+
+### 🔹 What is It?
+
+* The **non-null assertion (`!`)** tells TypeScript:
+
+  * “I’m sure this value is **not null or undefined**.”
+
+---
+
+### 🔹 Syntax
+
+```ts
+let username: string | null = "Alex";
+
+// Compiler error if accessed directly
+// console.log(username.length);
+
+// Use `!` to assert it’s non-null
+console.log(username!.length);
+```
+
+---
+
+### 🔹 Use Case: DOM Elements
+
+```ts
+const btn = document.getElementById("submit")!;
+btn.addEventListener("click", () => console.log("Clicked"));
+```
+
+⚠️ **Be careful!** If the value is actually `null`, you’ll get a runtime error.
+Use this only when you’re **100% sure** the value exists.
+
+---
+
+## 4. **Type Guards**
+
+### 🔹 What are Type Guards?
+
+* **Type Guards** are checks that **narrow down a variable’s type** in conditional blocks.
+* They make TypeScript understand which type is safe to use.
+
+---
+
+### 🔹 Built-in Guards
+
+#### `typeof`
+
+```ts
+function printId(id: number | string) {
+  if (typeof id === "string") {
+    console.log(id.toUpperCase());
+  } else {
+    console.log(id * 2);
+  }
+}
+```
+
+#### `instanceof`
+
+```ts
+class Dog { bark() {} }
+class Cat { meow() {} }
+
+function makeSound(animal: Dog | Cat) {
+  if (animal instanceof Dog) {
+    animal.bark();
+  } else {
+    animal.meow();
+  }
+}
+```
+
+---
+
+### 🔹 Custom Guards
+
+#### Using `in` Operator
+
+```ts
+type Car = { drive: () => void };
+type Boat = { sail: () => void };
+
+function move(vehicle: Car | Boat) {
+  if ("drive" in vehicle) {
+    vehicle.drive();
+  } else {
+    vehicle.sail();
+  }
+}
+```
+
+#### User-defined Guards (`param is Type`)
+
+```ts
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+
+function feed(pet: Fish | Bird) {
+  if (isFish(pet)) {
+    pet.swim();
+  } else {
+    pet.fly();
+  }
+}
+```
+
+---
+
+### 🔹 Discriminated Unions (Best Practice)
+
+```ts
+type Square = { kind: "square"; size: number };
+type Circle = { kind: "circle"; radius: number };
+
+type Shape = Square | Circle;
+
+function area(shape: Shape) {
+  switch (shape.kind) {
+    case "square":
+      return shape.size ** 2;
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+  }
+}
+```
+
+✅ Most scalable & safe type narrowing.
+
+---
+
+## 5. **Using `typeof` and `instanceof`**
+
+### 🔹 `typeof`
+
+* Works only with **primitive types**: `string`, `number`, `boolean`, `symbol`, `undefined`, `bigint`, `object`, `function`.
+
+```ts
+function logValue(x: string | number) {
+  if (typeof x === "string") console.log(x.toUpperCase());
+  else console.log(x * 2);
+}
+```
+
+---
+
+### 🔹 `instanceof`
+
+* Works with **classes and constructor functions**.
+
+```ts
+class Person { constructor(public name: string) {} }
+class Employee extends Person { jobTitle = "Dev"; }
+
+function printInfo(p: Person) {
+  if (p instanceof Employee) {
+    console.log(p.jobTitle);
+  } else {
+    console.log(p.name);
+  }
+}
+```
+
+---
+
+## 6. **Utility Types**
+
+### 🔹 `Partial<T>`
+
+* Makes **all properties optional**.
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+let updateUser: Partial<User> = { name: "Alex" };
+```
+
+---
+
+### 🔹 `Required<T>`
+
+* Makes **all properties required** (opposite of `Partial`).
+
+```ts
+interface User {
+  id?: number;
+  name?: string;
+}
+
+let u: Required<User> = { id: 1, name: "Alex" };
+```
+
+---
+
+### 🔹 `Readonly<T>`
+
+* Makes **all properties immutable**.
+
+```ts
+interface Config {
+  port: number;
+  db: string;
+}
+
+const config: Readonly<Config> = { port: 3000, db: "test" };
+// config.port = 4000; ❌ Error
+```
+
+---
+
+## ✅ Summary
+
+* **Type Assertions** → Tell TS to treat a value as a type.
+* **Type Casting** → Runtime conversion (JS), not TS-specific.
+* **Non-null Assertion (`!`)** → Skip null/undefined checks (use cautiously).
+* **Type Guards** → Narrow types safely (`typeof`, `instanceof`, `in`, custom).
+* **`typeof` vs `instanceof`** → Primitive checks vs Class checks.
+* **Utility Types** → `Partial`, `Required`, `Readonly` make type handling flexible.
+
+---
