@@ -18,8 +18,8 @@ let isLoggedIn: boolean = true;
 console.log("is user LoggedIn:-", isLoggedIn);
 
 // Sysmbol
-let uniqueId: symbol = Symbol("id");
-console.log("uniqueId:-", uniqueId);
+// let uniqueId: symbol = Symbol("id");
+// console.log("uniqueId:-", uniqueId);
 
 // BigInt
 
@@ -210,22 +210,22 @@ console.log("example of type Annotation_ " + typeof naam);
 
 // type interface: it help us to structure the object interface it tells ts what object should look like
 
-interface User {
+interface Users {
   id: number;
-  name: string;
+  names: string;
   isAdmin: boolean;
 }
 
 // any object of type (User) must have these three properties id,name,isAdmin
 
-const user: User = {
+const users: Users = {
   id: 1,
-  name: "Kohli",
+  names: "Kohli",
   isAdmin: true,
 };
-const { id, name, isAdmin } = user;
+const { id, names, isAdmin } = users;
 
-console.log({ id, name, isAdmin });
+console.log({ id, names, isAdmin });
 
 //
 // 2. Using Interfaces to Define Object Shapes
@@ -516,19 +516,15 @@ priontName({ hola: "foo" }, 123);
 
 // Modules
 
-import { makePayment,RecivePayment} from "./practice";
-import wholePyament from "./practice";
+// import { makePayment,RecivePayment} from "./practice";
+// import wholePyament from "./practice";
 
-wholePyament("Faizan",30000,"15-10-205")
-makePayment(18);
-RecivePayment("Azimuddin");
-
+// wholePyament("Faizan",30000,"15-10-205")
+// makePayment(18);
+// RecivePayment("Azimuddin");
 
 // What are Type Assertions?
 // type Assertion tells type-script to treat a vlaue as a specific type ,even if compiler cannot infer it.
-
-
-
 
 // // angle bracket syntex
 // let value: unknown = "Hello Assertion";
@@ -536,10 +532,10 @@ RecivePayment("Azimuddin");
 
 // console.log(steLength)
 
-let unVlaue:unknown="virat"
+let unVlaue: unknown = "virat";
 // as syntex
 
-let capitalize:string=(unVlaue as string).toUpperCase()
+let capitalize: string = (unVlaue as string).toUpperCase();
 console.log(capitalize);
 
 // when ts cannot infer type property
@@ -548,51 +544,96 @@ console.log(capitalize);
 
 // console.log( input.value)
 
-
 // Narrowing unknown or any
-function getValue():unknown{
+function getValue(): unknown {
   return "TeSt";
 }
 
-let len=(getValue() as string).toLowerCase()
-console.log(len)
+let len = (getValue() as string).toLowerCase();
+console.log(len);
 
 // Type Casting
 // in js when change the one type to another type is called type casting (string to number)
 // in ts there is no true castin only assertion that tells the compiler how to treat a value
 
+let num: number = Number("123");
+console.log(num);
 
-let num:number=Number("123")
-console.log(num)
-
-
-let str:Object=Object (123)
-console.log(str)
-
-
+let str: Object = Object(123);
+console.log(str);
 
 // Non-Null asertion operation
 
 let aaa: null | undefined | string;
-aaa! = "12"
+aaa! = "12";
 
-console.log(aaa)
-
-
+console.log(aaa);
 
 //Type guards are how you do type narrowing
 
 function TG(arg: string | number | any) {
   if (typeof arg === "string") {
-    console.log("this is string" )
-  } else if (typeof arg==="number") {
-console.log("this is number")
+    console.log("this is string");
+  } else if (typeof arg === "number") {
+    console.log("this is number");
   } else {
-    console.log("are you crazy")
+    console.log("are you crazy");
   }
 }
 
+TG(18);
+TG("Azimuddin");
+TG(null);
 
-TG(18)
-TG("Azimuddin")
-TG(null)
+// Utility Types in ts
+
+// we have partial<T>, required<T> and readonly <T>
+
+// Partial<T> make all properties optional
+interface User {
+  id: number;
+  nao: string;
+  email: string;
+}
+
+let updateUser: Partial<User> = { nao: "azim", email: "email@gmail.com" };
+
+console.log(updateUser.nao, updateUser.email);
+
+// Required <T>
+// make all poperties required (opposite of Partial)
+
+interface Userr {
+  id: number;
+  email?: string;
+  emppid?: number;
+}
+
+let userReq: Required<Userr> = {
+  id: 1244,
+  email: "sf@gamil.com",
+  emppid: 12,
+};
+
+console.log(userReq.id, userReq.emppid);
+
+// Readonly
+// makes all properties immutable
+
+interface config {
+  port: number;
+  db: string;
+}
+
+const configuration: Readonly<config> = {
+  port: 3000,
+  db: "test",
+};
+
+console.log(configuration.db, configuration.port);
+
+// configuration.port = 4000
+// console.log(configuration.port)  //it will give error because it is Readonly<> utility class
+
+let Done: string = "Done basics"
+console.log(Done)
